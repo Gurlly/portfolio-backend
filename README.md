@@ -38,7 +38,9 @@ pip install -r requirements.txt
 Create a .env file in the `backend/` directory.
 
 `SECRET_KEY=your-secret-key`
+
 `MODEL_PATH=./model/spam-ham-detection-best-...`
+
 `TOKENIZER_PATH=./model/tokenizer.json`
 
 ### 5. Run the server locally
