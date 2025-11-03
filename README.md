@@ -49,8 +49,15 @@ Create a .env file in the `backend/` directory.
 uvicorn app.main:app --reload
 ```
 
+---
+
 ## 🛠️ Tech Stack
 - FastAPI
 - PyTorch and scikit-learn
 - Uvicorn
 - Render 
+
+---
+
+## 📜 License
+This project is licensed under the MIT License. Feel free to fork and adapt for your own projects.
