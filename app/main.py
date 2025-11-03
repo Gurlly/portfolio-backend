@@ -1,58 +1,45 @@
-import os
-from fastapi import FastAPI, Request, Depends, BackgroundTasks
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from app.api import routes
+from app.core.config import settings
+import logging
 
-from app.schemas import ContactRequest, ContactResponse
-from app.inference import predict_spam, MODEL_VERSION
-from app.security import ALLOWED_ORIGINS, limiter, client_ip, verify_bearer
-from app.emailer import send_ham_email
+logging.basicConfig(level=logging.INFO if not settings.debug else logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Spam/Ham Job Offer LSTM API", version=MODEL_VERSION)
-
-# CORS (restrict to your frontend domains)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["POST", "GET", "OPTIONS"],
-    allow_headers=["content-type", "authorization"],
+app = FastAPI(
+    title=settings.app_name,
+    description="API for classifying contact form messages using an LSTM model.",
+    version="1.0.0",
+    debug=settings.debug,
 )
 
-# Rate limiting middleware
-@app.middleware("http")
-async def rate_limit_middleware(request: Request, call_next):
-    try:
-        limiter.check(client_ip(request))
-        response = await call_next(request)
-        return response
-    except Exception as e:
-        status = getattr(e, "status_code", 500)
-        detail = getattr(e, "detail", "Internal error")
-        return JSONResponse({"error": detail}, status_code=status)
+# Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # CHANGE THIS IN PRODUCTION! e.g., ["https://nathanmar.me"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/api/v1/health")
-def health():
-    return {"status": "ok", "version": MODEL_VERSION}
+# API Routes
+app.include_router(routes.router, prefix="/api/v1", tags=["classification"])
 
-@app.post("/api/v1/contact", response_model=ContactResponse)
-async def contact(
-    payload: ContactRequest,
-    bg: BackgroundTasks,
-    _auth=Depends(verify_bearer),  
-):
-    prob, label = predict_spam(payload.message)
+@app.get("/")
+def read_root():
+    return {"message": f"Welcome to the {settings.app_name}"}
 
-    if label == "Spam":
-        return ContactResponse(label=label, probability=prob, status="blocked", model_version=MODEL_VERSION)
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
 
-    # Ham → send email asynchronously
-    bg.add_task(
-        send_ham_email,
-        sender=payload.sender_email,
-        subject=payload.subject,
-        message=payload.message,
-        probability=prob,
-    )
+if __name__ == "__main__":
+    import uvicorn
     
-    return ContactResponse(label=label, probability=prob, status="sent", model_version=MODEL_VERSION)
+    uvicorn.run(
+        "app.main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=settings.debug # Reload code on changes if debug is True
+    )
