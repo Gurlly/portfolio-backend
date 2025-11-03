@@ -15,8 +15,9 @@ app = FastAPI(
 )
 
 origins = [
-    "https://www.natmartinez.xyz",  # your frontend domain
-    "http://localhost:3000",        # optional: for local dev
+    "https://www.natmartinez.xyz",
+    "https://natmartinez.xyz",
+    "http://localhost:3000"
 ]
 
 # Middleware
