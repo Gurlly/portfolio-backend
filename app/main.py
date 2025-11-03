@@ -14,10 +14,15 @@ app = FastAPI(
     debug=settings.debug,
 )
 
+origins = [
+    "https://www.natmartinez.xyz",  # your frontend domain
+    "http://localhost:3000",        # optional: for local dev
+]
+
 # Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://natmartinez.xyz", "http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
