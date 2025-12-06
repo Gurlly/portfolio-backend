@@ -4,6 +4,8 @@ from app.api import routes
 from app.core.config import settings
 import logging
 
+from mangum import Mangum
+
 logging.basicConfig(level=logging.INFO if not settings.debug else logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -28,7 +30,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # API Routes
 app.include_router(routes.router, prefix="/api/v1", tags=["classification"])
 
@@ -39,6 +40,8 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+handler = Mangum(app)
 
 if __name__ == "__main__":
     import uvicorn
