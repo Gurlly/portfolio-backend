@@ -30,7 +30,7 @@ class ContactFormInput(BaseModel):
     # Validators for message length
     @field_validator('message')
     def validate_message_length(cls, v):
-        if len(v) < 50:
+        if len(v) < 100:
              raise ValueError('Message must be at least 50 characters long')
         if len(v) > 1000:
              raise ValueError('Message cannot exceed 1000 characters')

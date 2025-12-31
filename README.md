@@ -37,16 +37,18 @@ pip install -r requirements.txt
 ### 4. Set environment variables
 Create a .env file in the `backend/` directory.
 
-`SECRET_KEY=your-secret-key`
+`SMTP_PASSWORD=your-secret-key`
 
-`MODEL_PATH=./model/spam-ham-detection-best-...`
+`SMPT_USERNAME=youremail.com`
 
-`TOKENIZER_PATH=./model/tokenizer.json`
+`MODEL_PATH=model/spam-ham-detection-best-...`
+
+`TOKENIZER_PATH=model/tokenizer.json`
 
 ### 5. Run the server locally
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 ---
