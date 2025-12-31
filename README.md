@@ -37,9 +37,9 @@ pip install -r requirements.txt
 ### 4. Set environment variables
 Create a .env file in the `backend/` directory.
 
-`SMTP_PASSWORD=your-secret-key`
+`RESEND_API_KEY=your-secret-key`
 
-`SMPT_USERNAME=youremail.com`
+`RECIPIENT_EMAIL=your-email`
 
 `MODEL_PATH=model/spam-ham-detection-best-...`
 

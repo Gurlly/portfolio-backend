@@ -8,17 +8,14 @@ class Settings(BaseSettings):
     model_path: str = os.environ.get("MODEL_PATH", "model/spam-ham-detection-best-model.pt")
     tokenizer_path: str = os.environ.get("TOKENIZER_PATH", "model/tokenizer.json")
     
-    # --- 2. Email Configuration ---
-    smtp_server: str = "smtp.gmail.com"
-    smtp_port: int = 465
+    # --- 2. Email Configuration (Resend) ---
+    # This will automatically read "RESEND_API_KEY" from your .env or Hugging Face Secrets
+    resend_api_key: Optional[str] = None
     
-    # These will be loaded directly from .env by Pydantic
-    smtp_username: Optional[str] = None
-    smtp_password: Optional[str] = None
-    recipient_email: Optional[str] = None 
+    # This will read "RECIPIENT_EMAIL"
+    recipient_email: Optional[str] = None
 
     # --- 3. Security & App ---
-    # We add a default for secret_key to avoid errors if it's missing in .env
     secret_key: str = "default_insecure_key_for_dev"
     app_name: str = "Job Offer Classifier API"
     debug: bool = False
@@ -28,9 +25,9 @@ class Settings(BaseSettings):
     rate_limit_window_seconds: int = 1800 
     
     class Config:
+        # Handles local .env files automatically
         env_file = Path(__file__).resolve().parent.parent.parent / ".env"
         env_file_encoding = 'utf-8'
-        
         extra = "ignore" 
         
 settings = Settings()
