@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     
     # --- 2. Email Configuration ---
     smtp_server: str = "smtp.gmail.com"
-    smtp_port: int = 587
+    smtp_port: int = 465
     
     # These will be loaded directly from .env by Pydantic
     smtp_username: Optional[str] = None
